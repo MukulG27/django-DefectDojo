@@ -1252,7 +1252,7 @@ HASHCODE_FIELDS_PER_SCANNER = {
     'Nuclei Scan': ['title', 'cwe', 'severity'],
     #Security Pipeline Scanners
     'MobSF Scan': ['title', 'severity', 'cwe'],
-    'Trufflehog Scan': ['title', 'cwe', 'severity', 'endpoints'],
+    'Trufflehog Scan': ['title', 'cwe', 'severity', 'file_path', 'line', 'endpoints'],
 }
 
 # Override the hardcoded settings here via the env var
