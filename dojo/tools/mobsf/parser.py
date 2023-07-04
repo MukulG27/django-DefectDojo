@@ -27,36 +27,48 @@ class MobSFParser(object):
         find_date = datetime.now()
         dupes = {}
         test_description = ""
-        if "name" in data:
+        if "app_name" in data:
             test_description = "**Info:**\n"
-            if "packagename" in data:
-                test_description = "%s  **Package Name:** %s\n" % (test_description, data["packagename"])
+            if "app_name" in data:
+                test_description = "%s  **Name:** %s\n" % (test_description, data["app_name"])
 
-            if "mainactivity" in data:
-                test_description = "%s  **Main Activity:** %s\n" % (test_description, data["mainactivity"])
+            if "version_name" in data:
+                test_description = "%s  **App Version:** %s\n" % (test_description, data["version_name"])
 
-            if "pltfm" in data:
-                test_description = "%s  **Platform:** %s\n" % (test_description, data["pltfm"])
+            if "package_name" in data:
+                test_description = "%s  **Package Name:** %s\n" % (test_description, data["package_name"])
 
-            if "sdk" in data:
-                test_description = "%s  **SDK:** %s\n" % (test_description, data["sdk"])
+            if "main_activity" in data:
+                test_description = "%s  **Main Activity:** %s\n" % (test_description, data["main_activity"])
 
-            if "min" in data:
-                test_description = "%s  **Min SDK:** %s\n" % (test_description, data["min"])
+            if "app_type" in data:
+                test_description = "%s  **App Type:** %s\n" % (test_description, data["app_type"])
 
-            if "targetsdk" in data:
-                test_description = "%s  **Target SDK:** %s\n" % (test_description, data["targetsdk"])
+            # if "pltfm" in data:
+                # test_description = "%s  **Platform:** %s\n" % (test_description, data["pltfm"])
 
-            if "minsdk" in data:
-                test_description = "%s  **Min SDK:** %s\n" % (test_description, data["minsdk"])
+            # if "sdk" in data:
+                # test_description = "%s  **SDK:** %s\n" % (test_description, data["sdk"])
 
-            if "maxsdk" in data:
-                test_description = "%s  **Max SDK:** %s\n" % (test_description, data["maxsdk"])
+            # if "min" in data:
+                # test_description = "%s  **Min SDK:** %s\n" % (test_description, data["min"])
+
+            if "target_sdk" in data:
+                test_description = "%s  **Target SDK:** %s\n" % (test_description, data["target_sdk"])
+
+            if "min_sdk" in data:
+                test_description = "%s  **Min SDK:** %s\n" % (test_description, data["min_sdk"])
+
+            if "max_sdk" in data:
+                test_description = "%s  **Max SDK:** %s\n" % (test_description, data["max_sdk"])
 
             test_description = "%s\n**File Information:**\n" % (test_description)
 
-            if "name" in data:
-                test_description = "%s  **Name:** %s\n" % (test_description, data["name"])
+            if "file_name" in data:
+                test_description = "%s  **File Name:** %s\n" % (test_description, data["file_name"])
+
+            if "size" in data:
+                test_description = "%s  **File Size:** %s\n" % (test_description, data["size"])
 
             if "md5" in data:
                 test_description = "%s  **MD5:** %s\n" % (test_description, data["md5"])
@@ -66,9 +78,6 @@ class MobSFParser(object):
 
             if "sha256" in data:
                 test_description = "%s  **SHA-256:** %s\n" % (test_description, data["sha256"])
-
-            if "size" in data:
-                test_description = "%s  **Size:** %s\n" % (test_description, data["size"])
 
             if "urls" in data:
                 curl = ""
@@ -109,6 +118,13 @@ class MobSFParser(object):
                     }
                     mobsf_findings.append(mobsf_item)
 
+        # Certificate Analysis
+        if "certificate_analysis" in data:
+            for finding in data["certificate_analysis"]["certificate_findings"]:
+                mobsf_item = {
+                    "category": "Certificate Analysis",
+                    "title":,
+                    "severity"
         # Insecure Connections
         if "insecure_connections" in data:
             for details in data["insecure_connections"]:
