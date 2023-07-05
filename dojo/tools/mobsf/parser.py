@@ -91,7 +91,7 @@ class MobSFParser(object):
             if "bin_anal" in data:
                 test_description = "%s  \n**Binary Analysis:** %s\n" % (test_description, data["bin_anal"])
 
-        test.description = html2text(test_description)
+        test.description = test_description
 
         mobsf_findings = []
         # Mobile Permissions
@@ -237,9 +237,9 @@ class MobSFParser(object):
         if "secrets" in data:
             for finding in data["secrets"]:
                 title = finding.split(" : ")[0]
-                title = title[2:len(title)-2]
+                title = title[1:len(title)-1]
                 key = finding.split(" : ")[1]
-                key = key[2:len(key)-2]
+                key = key[1:len(key)-1]
                 mobsf_item = {
                     "category": "Secrets",
                     "title": "Hardcoded Secret in " + title,
