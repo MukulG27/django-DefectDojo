@@ -150,6 +150,7 @@ class MobSFParser(object):
                     "description": "**Rule:** " + rule + "\n\n**Description:** " + desc + "\n",
                     "file_path": None
                 }
+                mobsf_findings.append(mobsf_item)
                 
         # Insecure Connections
         if "insecure_connections" in data:
@@ -246,6 +247,7 @@ class MobSFParser(object):
                     "description": "**Hardcoded Secret** in " + title + ": " + key,
                     "file_path": None
                 }
+                mobsf_findings.append(mobsf_item)
         
         # MobSF Findings
         if "findings" in data:
