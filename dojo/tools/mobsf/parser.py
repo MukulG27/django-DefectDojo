@@ -121,10 +121,36 @@ class MobSFParser(object):
         # Certificate Analysis
         if "certificate_analysis" in data:
             for finding in data["certificate_analysis"]["certificate_findings"]:
+                sev = finding[0]
+                desc = finding[1]
+                title = finding[2]
                 mobsf_item = {
                     "category": "Certificate Analysis",
-                    "title":,
-                    "severity"
+                    "title": title,
+                    "severity": sev,
+                    "description": desc,
+                    "file_path":None
+                }
+                mobsf_findings.append(mobsf_item)
+
+        # Manifest Analysis
+        if "manifest_analysis" in data:
+            for finding in data["manifest_analysis"]["manifest_findings"]:
+                if finding["severity"] == "suppressed":
+                    continue
+                title = html2text(finding["title"])
+                severity = finding["severity"]
+                desc = finding["description"]
+                rule = finding["rule"]
+                components = finding["component"]
+                mobsf_item = {
+                    "category": "Manifest",
+                    "title": title,
+                    "severity": severity,
+                    "description": "**Rule:** " + rule + "\n\n**Description:** " + desc + "\n",
+                    "file_path": None
+                }
+                
         # Insecure Connections
         if "insecure_connections" in data:
             for details in data["insecure_connections"]:
@@ -206,18 +232,21 @@ class MobSFParser(object):
                 }
                 mobsf_findings.append(mobsf_item)
 
-        # Manifest
-        if "manifest" in data:
-            for details in data["manifest"]:
+        # Secrets
+        if "secrets" in data:
+            for finding in data["secrets"]:
+                title = finding.split(" : ")[0]
+                title = title[2:len(title)-2]
+                key = finding.split(" : ")[1]
+                key = key[2:len(key)-2]
                 mobsf_item = {
-                    "category": "Manifest",
-                    "title": details["title"],
-                    "severity": details["stat"],
-                    "description": details["desc"],
+                    "category": "Secrets",
+                    "title": "Hardcoded Secret in " + title,
+                    "severity": "high",
+                    "description": "**Hardcoded Secret** in " + title + ": " + key,
                     "file_path": None
                 }
-                mobsf_findings.append(mobsf_item)
-
+        
         # MobSF Findings
         if "findings" in data:
             for title, finding in list(data["findings"].items()):
