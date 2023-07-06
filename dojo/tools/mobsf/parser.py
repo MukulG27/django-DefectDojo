@@ -41,17 +41,17 @@ class MobSFParser(object):
             if "main_activity" in data:
                 test_description = "%s  **Main Activity:** %s\n" % (test_description, data["main_activity"])
 
-            if "app_type" in data:
-                test_description = "%s  **App Type:** %s\n" % (test_description, data["app_type"])
+            # Not Needed
+            # if "app_type" in data:
+            #     test_description = "%s  **App Type:** %s\n" % (test_description, data["app_type"])
 
+            # pltfm, sdk, min not in JSON also these are redundant
             # if "pltfm" in data:
-                # test_description = "%s  **Platform:** %s\n" % (test_description, data["pltfm"])
-
+            #     test_description = "%s  **Platform:** %s\n" % (test_description, data["pltfm"])
             # if "sdk" in data:
-                # test_description = "%s  **SDK:** %s\n" % (test_description, data["sdk"])
-
+            #     test_description = "%s  **SDK:** %s\n" % (test_description, data["sdk"])
             # if "min" in data:
-                # test_description = "%s  **Min SDK:** %s\n" % (test_description, data["min"])
+            #     test_description = "%s  **Min SDK:** %s\n" % (test_description, data["min"])
 
             if "target_sdk" in data:
                 test_description = "%s  **Target SDK:** %s\n" % (test_description, data["target_sdk"])
@@ -79,17 +79,18 @@ class MobSFParser(object):
             if "sha256" in data:
                 test_description = "%s  **SHA-256:** %s\n" % (test_description, data["sha256"])
 
-            if "urls" in data:
-                curl = ""
-                for url in data["urls"]:
-                    for curl in url["urls"]:
-                        curl = "%s\n" % (curl)
-
-                if curl:
-                    test_description = "%s\n**URL's:**\n %s\n" % (test_description, curl)
-
-            if "bin_anal" in data:
-                test_description = "%s  \n**Binary Analysis:** %s\n" % (test_description, data["bin_anal"])
+            # Faulty Code and a lot of URLs
+            # if "urls" in data:
+            #     curl = ""
+            #     for url in data["urls"]:
+            #         for curl in url["urls"]:
+            #             curl = "%s\n" % (curl)
+            #     if curl:
+            #         test_description = "%s\n**URL's:**\n %s\n" % (test_description, curl)
+            
+            # bin_anal not in JSON
+            # if "bin_anal" in data:
+            #     test_description = "%s  \n**Binary Analysis:** %s\n" % (test_description, data["bin_anal"])
 
         test.description = test_description
 
@@ -104,7 +105,8 @@ class MobSFParser(object):
                         "title": details.get("name", ""),
                         "severity": self.getSeverityForPermission(details.get("status")),
                         "description": "**Permission Type:** " + details.get("name", "") + " (" + details.get("status", "") + ")\n\n**Description:** " + details.get("description", "") + "\n\n**Reason:** " + details.get("reason", ""),
-                        "file_path": None
+                        "file_path": None,
+                        "url": None
                     }
                     mobsf_findings.append(mobsf_item)
             else:
@@ -114,7 +116,8 @@ class MobSFParser(object):
                         "title": permission,
                         "severity": self.getSeverityForPermission(details.get("status", "")),
                         "description": "**Permission Type:** " + permission + "\n\n**Description:** " + details.get("description", ""),
-                        "file_path": None
+                        "file_path": None,
+                        "url": None
                     }
                     mobsf_findings.append(mobsf_item)
 
@@ -129,7 +132,8 @@ class MobSFParser(object):
                     "title": title,
                     "severity": sev,
                     "description": desc,
-                    "file_path":None
+                    "file_path":None,
+                    "url": None
                 }
                 mobsf_findings.append(mobsf_item)
 
@@ -148,58 +152,62 @@ class MobSFParser(object):
                     "title": title,
                     "severity": severity,
                     "description": "**Rule:** " + rule + "\n\n**Description:** " + desc + "\n",
-                    "file_path": None
+                    "file_path": None,
+                    "url": None
                 }
                 mobsf_findings.append(mobsf_item)
                 
-        # Insecure Connections
-        if "insecure_connections" in data:
-            for details in data["insecure_connections"]:
-                insecure_urls = ""
-                for url in details.split(','):
-                    insecure_urls = insecure_urls + url + "\n"
+        # # insecure_connections not present in JSON
+        # # Insecure Connections
+        # if "insecure_connections" in data:
+        #     for details in data["insecure_connections"]:
+        #         insecure_urls = ""
+        #         for url in details.split(','):
+        #             insecure_urls = insecure_urls + url + "\n"
+        #         mobsf_item = {
+        #             "category": None,
+        #             "title": "Insecure Connections",
+        #             "severity": "Low",
+        #             "description": insecure_urls,
+        #             "file_path": None
+        #         }
+        #         mobsf_findings.append(mobsf_item)
 
-                mobsf_item = {
-                    "category": None,
-                    "title": "Insecure Connections",
-                    "severity": "Low",
-                    "description": insecure_urls,
-                    "file_path": None
-                }
-                mobsf_findings.append(mobsf_item)
-
-        # Binary Analysis
-        if "binary_analysis" in data:
-            if type(data["binary_analysis"]) is list:
-                for details in data["binary_analysis"]:
-                    for binary_analysis_type in details:
-                        if "name" != binary_analysis_type:
-                            mobsf_item = {
-                                "category": "Binary Analysis",
-                                "title": details[binary_analysis_type]["description"].split(".")[0],
-                                "severity": details[binary_analysis_type]["severity"].replace("warning", "low").title(),
-                                "description": details[binary_analysis_type]["description"],
-                                "file_path": details["name"]
-                            }
-                            mobsf_findings.append(mobsf_item)
-            else:
-                for binary_analysis_type, details in list(data["binary_analysis"].items()):
-                    # "Binary makes use of insecure API(s)":{
-                    #     "detailed_desc":"The binary may contain the following insecure API(s) _vsprintf.",
-                    #     "severity":"high",
-                    #     "cvss":6,
-                    #     "cwe":"CWE-676 - Use of Potentially Dangerous Function",
-                    #     "owasp-mobile":"M7: Client Code Quality",
-                    #     "masvs":"MSTG-CODE-8"
-                    # }
-                    mobsf_item = {
-                        "category": "Binary Analysis",
-                        "title": details["detailed_desc"],
-                        "severity": details["severity"].replace("good", "info").title(),
-                        "description": details["detailed_desc"],
-                        "file_path": None
-                    }
-                    mobsf_findings.append(mobsf_item)
+        # # Not Required for now
+        # # Binary Analysis
+        # if "binary_analysis" in data:
+        #     if type(data["binary_analysis"]) is list:
+        #         for details in data["binary_analysis"]:
+        #             for binary_analysis_type in details:
+        #                 if "name" != binary_analysis_type:
+        #                     mobsf_item = {
+        #                         "category": "Binary Analysis",
+        #                         "title": details[binary_analysis_type]["description"].split(".")[0],
+        #                         "severity": details[binary_analysis_type]["severity"].replace("warning", "low").title(),
+        #                         "description": details[binary_analysis_type]["description"],
+        #                         "file_path": details["name"],
+        #                         "url": None
+        #                     }
+        #                     mobsf_findings.append(mobsf_item)
+        #     else:
+        #         for binary_analysis_type, details in list(data["binary_analysis"].items()):
+        #             # "Binary makes use of insecure API(s)":{
+        #             #     "detailed_desc":"The binary may contain the following insecure API(s) _vsprintf.",
+        #             #     "severity":"high",
+        #             #     "cvss":6,
+        #             #     "cwe":"CWE-676 - Use of Potentially Dangerous Function",
+        #             #     "owasp-mobile":"M7: Client Code Quality",
+        #             #     "masvs":"MSTG-CODE-8"
+        #             # }
+        #             mobsf_item = {
+        #                 "category": "Binary Analysis",
+        #                 "title": details["detailed_desc"],
+        #                 "severity": details["severity"].replace("good", "info").title(),
+        #                 "description": details["detailed_desc"],
+        #                 "file_path": None,
+        #                 "url": None
+        #             }
+        #             mobsf_findings.append(mobsf_item)
 
         # specific node for Android reports
         if "android_api" in data:
@@ -229,7 +237,22 @@ class MobSFParser(object):
                     "title": details["metadata"]["description"],
                     "severity": details["metadata"]["severity"].replace("warning", "low").title(),
                     "description": "**API:** " + api + "\n\n**Description:** " + details["metadata"]["description"],
-                    "file_path": None
+                    "file_path": None,
+                    "url": None
+                }
+                mobsf_findings.append(mobsf_item)
+
+        # Firebase URLs
+        if "firebase_urls" in data:
+            for finding in data["firebase_urls"]:
+                url = finding["url"]
+                mobsf_item = {
+                    "category": "Firebase Database URL",
+                    "title": "Firebase Database Used",
+                    "severity": "info",
+                    "description": "Firebase Database Used with URL: " + url,
+                    "file_path": None,
+                    "url": None
                 }
                 mobsf_findings.append(mobsf_item)
 
@@ -245,36 +268,37 @@ class MobSFParser(object):
                     "title": "Hardcoded Secret in " + title,
                     "severity": "high",
                     "description": "**Hardcoded Secret** in " + title + ": " + key,
-                    "file_path": None
+                    "file_path": None,
+                    "url": None
                 }
                 mobsf_findings.append(mobsf_item)
         
-        # MobSF Findings
-        if "findings" in data:
-            for title, finding in list(data["findings"].items()):
-                description = title
-                file_path = None
-
-                if "path" in finding:
-                    description = description + "\n\n**Files:**\n"
-                    for path in finding["path"]:
-                        if file_path is None:
-                            file_path = path
-                        description = description + " * " + path + "\n"
-
-                mobsf_item = {
-                    "category": "Findings",
-                    "title": title,
-                    "severity": finding["level"],
-                    "description": description,
-                    "file_path": file_path
-                }
-
-                mobsf_findings.append(mobsf_item)
+        # # findings not present in JSON
+        # # MobSF Findings
+        # if "findings" in data:
+        #     for title, finding in list(data["findings"].items()):
+        #         description = title
+        #         file_path = None
+        #         if "path" in finding:
+        #             description = description + "\n\n**Files:**\n"
+        #             for path in finding["path"]:
+        #                 if file_path is None:
+        #                     file_path = path
+        #                 description = description + " * " + path + "\n"
+        #         mobsf_item = {
+        #             "category": "Findings",
+        #             "title": title,
+        #             "severity": finding["level"],
+        #             "description": description,
+        #             "file_path": file_path,
+        #             "url": None
+        #         }
+        #         mobsf_findings.append(mobsf_item)
 
         for mobsf_finding in mobsf_findings:
             title = mobsf_finding["title"]
             sev = self.getCriticalityRating(mobsf_finding["severity"])
+            url = mobsf_finding["url"]
             description = ""
             file_path = None
             if mobsf_finding["category"]:
@@ -291,11 +315,12 @@ class MobSFParser(object):
                 static_finding=True,
                 dynamic_finding=False,
                 nb_occurences=1,
+                url=url,
             )
             if mobsf_finding["file_path"]:
                 finding.file_path = mobsf_finding["file_path"]
 
-            dupe_key = sev + title
+            dupe_key = sev + url + title
             if dupe_key in dupes:
                 find = dupes[dupe_key]
                 if description is not None:
