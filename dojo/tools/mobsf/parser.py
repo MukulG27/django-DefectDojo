@@ -252,7 +252,7 @@ class MobSFParser(object):
                     "severity": "info",
                     "description": "Firebase Database Used with URL: " + url,
                     "file_path": None,
-                    "url": None
+                    "url": url
                 }
                 mobsf_findings.append(mobsf_item)
 
@@ -309,18 +309,18 @@ class MobSFParser(object):
                 cwe=919,  # Weaknesses in Mobile Applications
                 test=test,
                 description=description,
+                url=url,
                 severity=sev,
                 references=None,
                 date=find_date,
                 static_finding=True,
                 dynamic_finding=False,
                 nb_occurences=1,
-                url=url,
             )
             if mobsf_finding["file_path"]:
                 finding.file_path = mobsf_finding["file_path"]
 
-            dupe_key = sev + url + title
+            dupe_key = sev + title
             if dupe_key in dupes:
                 find = dupes[dupe_key]
                 if description is not None:
