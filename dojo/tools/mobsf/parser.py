@@ -1,5 +1,6 @@
 
 import json
+# import hashlib
 from datetime import datetime
 
 from html2text import html2text
@@ -165,7 +166,7 @@ class MobSFParser(object):
         #         for url in details.split(','):
         #             insecure_urls = insecure_urls + url + "\n"
         #         mobsf_item = {
-        #             "category": None,
+        #             "category": "Insecure Connections",
         #             "title": "Insecure Connections",
         #             "severity": "Low",
         #             "description": insecure_urls,
@@ -299,6 +300,7 @@ class MobSFParser(object):
             title = mobsf_finding["title"]
             sev = self.getCriticalityRating(mobsf_finding["severity"])
             url = mobsf_finding["url"]
+            category = mobsf_finding["category"]
             description = ""
             file_path = None
             if mobsf_finding["category"]:
@@ -321,6 +323,8 @@ class MobSFParser(object):
                 finding.file_path = mobsf_finding["file_path"]
 
             dupe_key = sev + title
+            if url is not None:
+                dupe_key += url
             if dupe_key in dupes:
                 find = dupes[dupe_key]
                 if description is not None:
