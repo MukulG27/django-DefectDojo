@@ -1251,7 +1251,7 @@ HASHCODE_FIELDS_PER_SCANNER = {
     'Wazuh Scan': ['title'],
     'Nuclei Scan': ['title', 'cwe', 'severity'],
     #Security Pipeline Scanners
-    'MobSF Scan': ['title', 'severity', 'cwe'],
+    'MobSF Scan': ['title', 'severity', 'cwe', 'url'],
     'Trufflehog Scan': ['title', 'cwe', 'severity', 'file_path', 'line', 'endpoints'],
 }
 
