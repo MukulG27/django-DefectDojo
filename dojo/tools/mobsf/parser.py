@@ -250,8 +250,8 @@ class MobSFParser(object):
                 url = finding["url"]
                 title = "Firebase Database Used"
                 if "firebasio" in url:
-                    title += ": "
                     url_part = url.split("//")[1].split(".")[0]
+                    title = "%s: %s" % (title,url_part)
                 mobsf_item = {
                     "category": "Firebase Database URL",
                     "title": title,
