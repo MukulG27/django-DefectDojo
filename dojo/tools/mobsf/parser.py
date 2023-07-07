@@ -333,7 +333,7 @@ class MobSFParser(object):
             if dupe_key in dupes:
                 find = dupes[dupe_key]
                 if (description is not None) and (description not in find.description):
-                    find.description += description
+                    find.description += "\n" + description
                 find.nb_occurences += 1
             else:
                 finding.description = ("**Category:** " + category + "\n\n%s") % (finding.description)
