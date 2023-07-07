@@ -248,9 +248,13 @@ class MobSFParser(object):
         if "firebase_urls" in data:
             for finding in data["firebase_urls"]:
                 url = finding["url"]
+                title = "Firebase Database Used"
+                if "firebasio" in url:
+                    title += ": "
+                    url_part = url.split("//")[1].split(".")[0]
                 mobsf_item = {
                     "category": "Firebase Database URL",
-                    "title": "Firebase Database Used",
+                    "title": title,
                     "severity": "info",
                     "description": "Firebase Database Used with URL: " + url,
                     "file_path": None,
