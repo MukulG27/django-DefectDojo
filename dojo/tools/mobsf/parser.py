@@ -153,7 +153,7 @@ class MobSFParser(object):
                     "category": "Manifest",
                     "title": title,
                     "severity": severity,
-                    "description": "**Rule:** " + rule + "\n\n**Description:** " + desc + "\n",
+                    "description": "**Rule:** " + rule + "\n\n**Description:** " + desc,
                     "file_path": None,
                     "url": None
                 }
@@ -249,7 +249,7 @@ class MobSFParser(object):
             for finding in data["firebase_urls"]:
                 url = finding["url"]
                 title = "Firebase Database Used"
-                if "firebasio" in url:
+                if "firebaseio" in url:
                     url_part = url.split("//")[1].split(".")[0]
                     title = "%s: %s" % (title,url_part)
                 mobsf_item = {
@@ -309,7 +309,8 @@ class MobSFParser(object):
             category = mobsf_finding["category"]
             description = ""
             file_path = None
-            description = description + html2text(mobsf_finding["description"])
+            description = description + mobsf_finding["description"]
+            description = re.sub('<[^>]*>', '', description)
             finding = Finding(
                 title=title,
                 cwe=919,  # Weaknesses in Mobile Applications
