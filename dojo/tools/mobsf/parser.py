@@ -303,8 +303,6 @@ class MobSFParser(object):
             category = mobsf_finding["category"]
             description = ""
             file_path = None
-            if mobsf_finding["category"]:
-                description += "**Category:** " + mobsf_finding["category"] + "\n\n"
             description = description + html2text(mobsf_finding["description"])
             finding = Finding(
                 title=title,
@@ -322,15 +320,16 @@ class MobSFParser(object):
             if mobsf_finding["file_path"]:
                 finding.file_path = mobsf_finding["file_path"]
 
-            dupe_key = sev + title
+            dupe_key = sev + title + category
             if url is not None:
                 dupe_key += url
             if dupe_key in dupes:
                 find = dupes[dupe_key]
-                if description is not None:
+                if description is not None and not in find.description:
                     find.description += description
                 find.nb_occurences += 1
             else:
+                finding.description = "**Category:** " + category + "\n\n" + finding.description
                 dupes[dupe_key] = finding
         return list(dupes.values())
 
