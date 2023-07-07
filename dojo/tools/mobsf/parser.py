@@ -1,6 +1,7 @@
 
 import json
 # import hashlib
+import re
 from datetime import datetime
 
 from html2text import html2text
@@ -143,7 +144,7 @@ class MobSFParser(object):
             for finding in data["manifest_analysis"]["manifest_findings"]:
                 if finding["severity"] == "suppressed":
                     continue
-                title = html2text(finding["title"])
+                title = finding["title"]
                 severity = finding["severity"]
                 desc = finding["description"]
                 rule = finding["rule"]
@@ -298,6 +299,7 @@ class MobSFParser(object):
 
         for mobsf_finding in mobsf_findings:
             title = mobsf_finding["title"]
+            re.sub('<[^>]*>', '', title)
             sev = self.getCriticalityRating(mobsf_finding["severity"])
             url = mobsf_finding["url"]
             category = mobsf_finding["category"]
