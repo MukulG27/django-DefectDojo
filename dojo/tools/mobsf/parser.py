@@ -325,11 +325,11 @@ class MobSFParser(object):
                 dupe_key += url
             if dupe_key in dupes:
                 find = dupes[dupe_key]
-                if description is not None and not in find.description:
+                if (description is not None) and (description not in find.description):
                     find.description += description
                 find.nb_occurences += 1
             else:
-                finding.description = "**Category:** " + category + "\n\n" + finding.description
+                finding.description = ("**Category:** " + category + "\n\n%s") % (finding.description)
                 dupes[dupe_key] = finding
         return list(dupes.values())
 
