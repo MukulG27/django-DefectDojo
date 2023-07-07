@@ -299,7 +299,7 @@ class MobSFParser(object):
 
         for mobsf_finding in mobsf_findings:
             title = mobsf_finding["title"]
-            re.sub('<[^>]*>', '', title)
+            title = re.sub('<[^>]*>', '', title)
             sev = self.getCriticalityRating(mobsf_finding["severity"])
             url = mobsf_finding["url"]
             category = mobsf_finding["category"]
