@@ -1193,7 +1193,6 @@ HASHCODE_FIELDS_PER_SCANNER = {
     'Dependency Check Scan': ['title', 'cwe', 'file_path'],
     'Dockle Scan': ['title', 'description', 'vuln_id_from_tool'],
     'Dependency Track Finding Packaging Format (FPF) Export': ['component_name', 'component_version', 'vulnerability_ids'],
-    'MobSF Scan': ['title', 'severity', 'cwe'],
     'Mobsfscan Scan': ['title', 'severity', 'cwe'],
     'Nessus Scan': ['title', 'severity', 'vulnerability_ids', 'cwe'],
     'Nexpose Scan': ['title', 'severity', 'vulnerability_ids', 'cwe'],
@@ -1285,7 +1284,6 @@ HASHCODE_ALLOWS_NULL_CWE = {
     'Cloudsploit Scan': True,
     'SonarQube Scan': False,
     'Dependency Check Scan': True,
-    'MobSF Scan': True,
     'Mobsfscan Scan': False,
     'Nessus Scan': True,
     'Nexpose Scan': True,
@@ -1317,6 +1315,9 @@ HASHCODE_ALLOWS_NULL_CWE = {
     'Codechecker Report native': True,
     'Wazuh': True,
     'Nuclei Scan': True,
+    #Security Pipeline Scanners
+    'MobSF Scan': True,
+    'Trufflehog Scan': True,
 }
 
 # List of fields that are known to be usable in hash_code computation)
@@ -1376,7 +1377,6 @@ DEDUPLICATION_ALGORITHM_PER_PARSER = {
     'Coverity API': DEDUPE_ALGO_UNIQUE_ID_FROM_TOOL,
     'Cobalt.io API': DEDUPE_ALGO_UNIQUE_ID_FROM_TOOL,
     'Dependency Track Finding Packaging Format (FPF) Export': DEDUPE_ALGO_HASH_CODE,
-    'MobSF Scan': DEDUPE_ALGO_HASH_CODE,
     'Mobsfscan Scan': DEDUPE_ALGO_HASH_CODE,
     'SonarQube Scan detailed': DEDUPE_ALGO_UNIQUE_ID_FROM_TOOL,
     'SonarQube Scan': DEDUPE_ALGO_HASH_CODE,
@@ -1454,6 +1454,9 @@ DEDUPLICATION_ALGORITHM_PER_PARSER = {
     'Wpscan': DEDUPE_ALGO_HASH_CODE,
     'Popeye Scan': DEDUPE_ALGO_HASH_CODE,
     'Nuclei Scan': DEDUPE_ALGO_HASH_CODE,
+    #Security Pipeline Scanners
+    'MobSF Scan': DEDUPE_ALGO_HASH_CODE,
+    'Trufflehog Scan': DEDUPE_ALGO_HASH_CODE,
 }
 
 # Override the hardcoded settings here via the env var
