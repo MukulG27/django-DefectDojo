@@ -112,14 +112,19 @@ class TruffleHogParser(object):
             email = source_data.get("email", "")
             commit = source_data.get("commit", "")
             detector_name = json_data.get("DetectorName", "")
+            decoder_name = json_data.get("DecoderName", "")
             date = source_data.get("timestamp", "")
             line_number = source_data.get("line", 0)
             repository = source_data.get("repository", "")
             link = source_data.get("link", "")
+            raw_info = json_data.get("Raw", "")
+            rawv_info = json_data.get("RawV2", "")
             redacted_info = json_data.get("Redacted", "")
             structured_data = json_data.get("StructuredData", {})
             extra_data = json_data.get("ExtraData", {})
             verified = json_data.get("Verified", "")
+
+            line = f"{line_number}"
 
             titleText = f"Hard Coded {detector_name} secret in: {file}"
 
@@ -127,14 +132,19 @@ class TruffleHogParser(object):
             if link:
                 mitigation = f"{mitigation}\nSee the commit here: {link}"
 
-            description = f"**Repository:** {repository}\n"
-            description += f"**Link:** {link}\n"
-            description += f"**Commit Hash:** {commit}\n"
+            description = f"**Committer:** {email}\n"
             description += f"**Commit Date:** {date}\n"
-            description += f"**Committer:** {email}\n"
-            description += f"**Reason:** {detector_name}\n"
-            description += f"**Path:** {file}\n"
-            description += f"**Contents:** {redacted_info}\n"
+            description += f"**Commit Hash:** {commit}\n"
+            
+            if link:
+                description += f"**Link:** {link}\n"
+
+            description += f"**Detector:** {detector_name}\n"
+            description += f"**Decoder:** {decoder_name}\n"
+            description += f"**Raw Data:** {raw_info}\n"
+
+            if rawv_info:
+                description += f"**RawV2 Data:** {rawv_info}\n"
 
             if structured_data:
                 description += f"**Structured Data:**\n{self.walk_dict(structured_data)}\n"
@@ -151,13 +161,14 @@ class TruffleHogParser(object):
                 elif detector_name == "Generic Secret":
                     severity = "Medium"
 
-            dupe_key = hashlib.md5((file + detector_name).encode("utf-8")).hexdigest()
+            dupe_key = hashlib.md5((file + line + detector_name).encode("utf-8")).hexdigest()
 
             if dupe_key in dupes:
                 finding = dupes[dupe_key]
-                finding.description = finding.description + description
-                finding.nb_occurences += 1
-                dupes[dupe_key] = finding
+                if description not in finding.description:
+                    finding.description = finding.description + description
+                    finding.nb_occurences += 1
+                    dupes[dupe_key] = finding
             else:
                 dupes[dupe_key] = True
 
