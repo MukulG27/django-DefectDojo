@@ -17,6 +17,7 @@ class TruffleHogParser(object):
 
     def get_findings(self, filename, test):
         data = filename.read()
+        data = self.escape_null(data)
         dict_strs = data.splitlines()
         if len(dict_strs) == 0:
             return []
@@ -204,3 +205,8 @@ class TruffleHogParser(object):
                     else:
                         return_string += f"{tab_string}{key}: {value}\n"
         return return_string
+        
+    def escape_null(self, data):
+        data = data.decode('utf-8')
+        data = data.replace('\\u0000', '')
+        return data
